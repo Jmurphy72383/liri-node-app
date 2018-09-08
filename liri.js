@@ -2,6 +2,7 @@ require("dotenv").config();
 var request = require("request");
 var Spotify = require('node-spotify-api');
 var moment = require('moment');
+var fs = require('fs');
 
 //PROCESS.ARGV Vars
 var keyWordSearch = process.argv[2];
@@ -10,8 +11,12 @@ var searchInput = process.argv.slice(3).join(" ");
 var keys = require('./keys.js');
 var spotify = new Spotify(keys.spotify);
 
-//IF USER INPUTS CONCERT-THIS
+//IF USER INPUTS concert-this
 if(keyWordSearch === "concert-this") {
+    concertSearch();
+}
+
+function concertSearch() {
     request("https://rest.bandsintown.com/artists/" + searchInput + "/events?app_id=codingbootcamp", function(error, response, body) {
 
   if (!error && response.statusCode === 200) {
@@ -23,7 +28,7 @@ if(keyWordSearch === "concert-this") {
 });
 }
 
-//IF USER INPUTS SPOTIFY-THIS-SONG
+//IF USER INPUTS spotify-this-song
 if(keyWordSearch === 'spotify-this-song' && searchInput === "") {
     searchInput = 'The Sign';
     spotifySearch();
@@ -43,8 +48,15 @@ function spotifySearch() {
       });
 }
 
-//IF USER INPUTS MOVIE-THIS
-if(keyWordSearch === 'movie-this') {
+//IF USER INPUTS movie-this
+if(keyWordSearch === 'movie-this' && searchInput === "") {
+    searchInput = 'Mr. Nobody';
+    omdbSearch();
+} else if(keyWordSearch === 'movie-this') {
+    omdbSearch();
+} 
+
+function omdbSearch() {
     request("http://www.omdbapi.com/?t=" + searchInput + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
 
   if (!error && response.statusCode === 200) {
@@ -60,7 +72,23 @@ if(keyWordSearch === 'movie-this') {
 });
 }
 
+//IF USER INPUTS do-what-it-says
+if(keyWordSearch === 'do-what-it-says') {
+    fs.readFile('random.txt', 'utf-8', function(err, data) {
+        newArr = data.split(",");
 
+        keyWordSearch = newArr[0];
+        searchInput = newArr[1];
+        if(keyWordSearch === 'spotify-this-song') {
+            spotifySearch();
+        } else if(keyWordSearch === 'movie-this') {
+            omdbSearch();
+        } else if(keyWordSearch === 'concert-this') {
+            concertSearch();
+        }
+        
+    })
+}
 
 
 
