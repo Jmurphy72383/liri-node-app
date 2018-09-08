@@ -16,9 +16,9 @@ if(keyWordSearch === "concert-this") {
 
   if (!error && response.statusCode === 200) {
     concertDate = moment(JSON.parse(body)[0].datetime).format('MM DD YYYY');
-    console.log(JSON.parse(body)[0].venue.name); //Name of Venue
-    console.log(JSON.parse(body)[0].venue.city + ', ' + JSON.parse(body)[0].venue.region); //Venue Location
-    console.log(concertDate); //Date of Event
+    console.log("Venue: " + JSON.parse(body)[0].venue.name);
+    console.log("Location: " + JSON.parse(body)[0].venue.city + ', ' + JSON.parse(body)[0].venue.region);
+    console.log("Date: " + concertDate);
   }
 });
 }
@@ -36,13 +36,30 @@ function spotifySearch() {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
-        
-        console.log(data.tracks.items[0].album.artists[0].name); //Artists/Band Name
-        console.log(data.tracks.items[0].name); //Song Name
-        console.log(data.tracks.items[0].album.artists[0].external_urls.spotify); //Preview Link from Spotify
-        console.log(data.tracks.items[0].album.name); //Album The Song is On.
+        console.log("Artist/Band: " + data.tracks.items[0].album.artists[0].name);
+        console.log("Song Title: " + data.tracks.items[0].name);
+        console.log("Preview Song: " + data.tracks.items[0].album.artists[0].external_urls.spotify);
+        console.log("Album: " + data.tracks.items[0].album.name);
       });
 }
+
+//IF USER INPUTS MOVIE-THIS
+if(keyWordSearch === 'movie-this') {
+    request("http://www.omdbapi.com/?t=" + searchInput + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
+
+  if (!error && response.statusCode === 200) {
+    console.log("Title: " + JSON.parse(body).Title);
+    console.log("Released: " + JSON.parse(body).Year);
+    console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
+    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+    console.log("Produced in: " + JSON.parse(body).Country);
+    console.log("Language: " + JSON.parse(body).Language);
+    console.log("Plot: " + JSON.parse(body).Plot);
+    console.log("Actors: " + JSON.parse(body).Actors);
+  }
+});
+}
+
 
 
 
